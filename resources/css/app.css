@@ -1,3 +1,13 @@
+/* Hallmark · shape: Stage hero over a dusk photograph + app screens · genre: modern-minimal · theme: Dusk (by request) · redesign: full
+ * hero: Stage, the vault board overlapping the photograph · nav: glass bar, wordmark left, links with a dot, account right · footer: a slim mast with the photograph credit · imagery: one dusk photograph, the product built · signature: the vault board in smoked glass, its chips filtering the tiles live · dusk: fog/periwinkle-apricot/glass
+ * axes: dark/grotesk-sans/cool · posture: committed · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4 · weakest: V, the app screens carry less photograph than Welcome so the glass leans on the faint fixed backdrop */
+/* Hallmark · waive 28b · the video sits below the fold on the item page under Back to Keepsake and above the Description and Category · the poster is the item thumbnail when one exists, Title and preload=metadata cover the rest */
+@import url("./tokens.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::selection { background: color-mix(in oklab, var(--color-accent) 30%, transparent); color: var(--color-ink); }
+html { scrollbar-color: var(--color-muted) var(--color-paper); }
