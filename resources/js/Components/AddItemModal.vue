@@ -8,6 +8,7 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TagBadge from '@/Components/TagBadge.vue';
+import TypeIcon from '@/Components/TypeIcon.vue';
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -89,69 +90,74 @@ function close() {
 }
 
 const uploadTypes = [
-    { value: 'image', label: '🖼️ Image' },
-    { value: 'video', label: '🎬 Video' },
-    { value: 'screenshot', label: '📸 Screenshot' },
-    { value: 'clip', label: '🎞️ Clip' },
+    { value: 'image', label: 'Image', icon: 'image' },
+    { value: 'video', label: 'Video', icon: 'video' },
+    { value: 'screenshot', label: 'Screenshot', icon: 'screenshot' },
+    { value: 'clip', label: 'Clip', icon: 'clip' },
 ];
 </script>
 
 <template>
     <Modal :show="show" @close="close" max-width="2xl">
-        <div class="bg-gray-800 p-6">
+        <div class="sheet">
             <!-- Header -->
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-100">Save to Keepsake</h2>
-                <button @click="close" class="text-gray-500 hover:text-gray-300 transition">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
+            <div class="sheet__head">
+                <h2 class="sheet__title">Save to Keepsake</h2>
+                <button @click="close" class="iconbtn" aria-label="Close">
+                    <TypeIcon name="close" />
                 </button>
             </div>
 
             <!-- Mode tabs -->
-            <div class="flex rounded-xl bg-gray-900 p-1 mb-6">
+            <div class="tabs" role="tablist" style="margin-bottom: var(--space-lg)">
                 <button
                     @click="switchMode('link')"
-                    class="flex-1 rounded-lg py-2.5 text-sm font-medium transition-all duration-200"
-                    :class="mode === 'link' ? 'bg-indigo-600 text-white shadow-lg' : 'text-gray-400 hover:text-gray-200'"
+                    class="tab"
+                    role="tab"
+                    :aria-selected="mode === 'link'"
+                    type="button"
                 >
-                    🔗 Save Link
+                    <TypeIcon name="link" />
+                    Save Link
                 </button>
                 <button
                     @click="switchMode('upload')"
-                    class="flex-1 rounded-lg py-2.5 text-sm font-medium transition-all duration-200"
-                    :class="mode === 'upload' ? 'bg-indigo-600 text-white shadow-lg' : 'text-gray-400 hover:text-gray-200'"
+                    class="tab"
+                    role="tab"
+                    :aria-selected="mode === 'upload'"
+                    type="button"
                 >
-                    📤 Upload File
+                    <TypeIcon name="upload" />
+                    Upload File
                 </button>
             </div>
 
-            <form @submit.prevent="submit" class="space-y-5">
+            <form @submit.prevent="submit" class="formgrid">
                 <!-- URL input (link mode) -->
                 <div v-if="mode === 'link'">
-                    <InputLabel value="URL" class="text-gray-300" />
+                    <InputLabel for="item-url" value="URL" />
                     <TextInput
+                        id="item-url"
                         v-model="form.url"
                         type="url"
                         placeholder="https://reddit.com/r/..."
-                        class="mt-1 w-full bg-gray-900 border-gray-700 text-gray-100 placeholder-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
                     />
-                    <InputError :message="form.errors.url" class="mt-1" />
+                    <InputError :message="form.errors.url" />
                 </div>
 
                 <!-- File upload (upload mode) -->
                 <div v-if="mode === 'upload'">
                     <!-- Type selector -->
-                    <div class="flex gap-2 mb-4">
+                    <div class="chips" style="margin-bottom: var(--space-md)">
                         <button
                             v-for="t in uploadTypes"
                             :key="t.value"
                             type="button"
                             @click="form.type = t.value"
-                            class="rounded-lg px-3 py-2 text-sm transition-all duration-200"
-                            :class="form.type === t.value ? 'bg-indigo-600/20 text-indigo-400 ring-1 ring-indigo-500' : 'bg-gray-900 text-gray-400 hover:text-gray-200'"
+                            class="chip"
+                            :aria-pressed="form.type === t.value"
                         >
+                            <TypeIcon :name="t.icon" />
                             {{ t.label }}
                         </button>
                     </div>
@@ -162,72 +168,71 @@ const uploadTypes = [
                         @dragleave="dragOver = false"
                         @drop.prevent="handleDrop"
                         @click="fileInput?.click()"
-                        class="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-10 cursor-pointer transition-all duration-200"
-                        :class="dragOver ? 'border-indigo-500 bg-indigo-500/10' : 'border-gray-700 bg-gray-900/50 hover:border-gray-500'"
+                        @keydown.enter.prevent="fileInput?.click()"
+                        class="drop"
+                        role="button"
+                        tabindex="0"
+                        :data-over="dragOver"
                     >
                         <input ref="fileInput" type="file" class="hidden" @change="handleFileSelect" accept="image/*,video/*" />
-                        <svg v-if="!form.file" class="h-10 w-10 text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                        </svg>
-                        <p v-if="!form.file" class="text-sm text-gray-500">Drop file here or <span class="text-indigo-400">click to browse</span></p>
-                        <div v-else class="flex items-center gap-3">
-                            <span class="text-2xl">{{ form.type === 'image' ? '🖼️' : '🎬' }}</span>
-                            <div>
-                                <p class="text-sm font-medium text-gray-200">{{ fileName }}</p>
-                                <p class="text-xs text-gray-500">{{ (form.file.size / 1024 / 1024).toFixed(1) }} MB</p>
+                        <template v-if="!form.file">
+                            <TypeIcon name="upload" />
+                            <p>Drop file here or <u>click to browse</u></p>
+                        </template>
+                        <div v-else class="drop__file">
+                            <TypeIcon :name="form.type === 'image' ? 'image' : 'video'" />
+                            <div style="text-align: left">
+                                <b style="display: block; font-weight: 500">{{ fileName }}</b>
+                                <span class="muted" style="font-size: var(--text-xs)">{{ (form.file.size / 1024 / 1024).toFixed(1) }} MB</span>
                             </div>
-                            <button type="button" @click.stop="form.file = null" class="text-gray-500 hover:text-red-400">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
+                            <button type="button" @click.stop="form.file = null" class="iconbtn" aria-label="Remove file">
+                                <TypeIcon name="close" />
                             </button>
                         </div>
                     </div>
-                    <InputError :message="form.errors.file" class="mt-1" />
+                    <InputError :message="form.errors.file" />
                 </div>
 
                 <!-- Title -->
                 <div>
-                    <InputLabel value="Title" class="text-gray-300" />
+                    <InputLabel for="item-title" value="Title" />
                     <TextInput
+                        id="item-title"
                         v-model="form.title"
                         type="text"
                         placeholder="Give it a name..."
-                        class="mt-1 w-full bg-gray-900 border-gray-700 text-gray-100 placeholder-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
                     />
-                    <InputError :message="form.errors.title" class="mt-1" />
+                    <InputError :message="form.errors.title" />
                 </div>
 
                 <!-- Description -->
                 <div>
-                    <InputLabel value="Description (optional)" class="text-gray-300" />
+                    <InputLabel for="item-description" value="Description (optional)" />
                     <textarea
+                        id="item-description"
                         v-model="form.description"
                         rows="2"
                         placeholder="Notes about this item..."
-                        class="mt-1 w-full rounded-md bg-gray-900 border-gray-700 text-gray-100 placeholder-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        class="field"
                     ></textarea>
-                    <InputError :message="form.errors.description" class="mt-1" />
+                    <InputError :message="form.errors.description" />
                 </div>
 
                 <!-- Category -->
                 <div>
-                    <InputLabel value="Category" class="text-gray-300" />
-                    <select
-                        v-model="form.category_id"
-                        class="mt-1 w-full rounded-md bg-gray-900 border-gray-700 text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    >
+                    <InputLabel for="item-category" value="Category" />
+                    <select id="item-category" v-model="form.category_id" class="field">
                         <option :value="null">No category</option>
                         <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                            {{ cat.icon || '📁' }} {{ cat.name }}
+                            {{ cat.icon }} {{ cat.name }}
                         </option>
                     </select>
                 </div>
 
                 <!-- Tags -->
                 <div>
-                    <InputLabel value="Tags" class="text-gray-300 mb-2" />
-                    <div class="flex flex-wrap gap-2">
+                    <InputLabel value="Tags" />
+                    <div class="chips">
                         <TagBadge
                             v-for="tag in tags"
                             :key="tag.id"
@@ -235,22 +240,15 @@ const uploadTypes = [
                             :selected="form.tags.includes(tag.id)"
                             @click="toggleTag(tag.id)"
                         />
-                        <span v-if="!tags.length" class="text-sm text-gray-600 italic">No tags yet. Create some in Tags page.</span>
+                        <span v-if="!tags.length" class="muted" style="font-size: var(--text-sm)">No tags yet. Create some in Tags page.</span>
                     </div>
                 </div>
 
                 <!-- Submit -->
-                <div class="flex justify-end gap-3 pt-2">
+                <div class="actions">
                     <SecondaryButton @click="close">Cancel</SecondaryButton>
-                    <PrimaryButton
-                        :disabled="form.processing"
-                        class="bg-indigo-600 hover:bg-indigo-500"
-                    >
-                        <svg v-if="form.processing" class="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                        </svg>
-                        {{ form.processing ? 'Saving...' : '💾 Save to Keepsake' }}
+                    <PrimaryButton :disabled="form.processing" :aria-busy="form.processing">
+                        {{ form.processing ? 'Saving...' : 'Save to Keepsake' }}
                     </PrimaryButton>
                 </div>
             </form>
