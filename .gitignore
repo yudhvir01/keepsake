@@ -25,3 +25,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Hallmark
+/.hallmark/
+/.claude/
+/.agents/
+/GEMINI.md
+/skills-lock.json

@@ -33,7 +33,7 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <div v-if="status" class="status mb-4">
             {{ status }}
         </div>
 
@@ -70,19 +70,17 @@ const submit = () => {
             </div>
 
             <div class="mt-4 block">
-                <label class="flex items-center">
+                <label class="checkrow">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-                        >Remember me</span
-                    >
+                    <span>Remember me</span>
                 </label>
             </div>
 
-            <div class="mt-4 flex items-center justify-between">
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                    class="textlink"
                 >
                     Forgot your password?
                 </Link>
@@ -96,13 +94,13 @@ const submit = () => {
                 </PrimaryButton>
             </div>
 
-            <div class="mt-6 border-t border-gray-200 pt-4 text-center dark:border-gray-700">
-                <span class="text-sm text-gray-600 dark:text-gray-400">
-                    Don't have an account?
+            <div class="auth__foot">
+                <span class="muted text-sm">
+                    Don’t have an account?
                 </span>
                 <Link
                     :href="route('register')"
-                    class="ms-1 text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 underline"
+                    class="textlink ms-1 text-sm"
                 >
                     Create an account
                 </Link>
