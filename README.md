@@ -1,58 +1,96 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Keepsake
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A quiet, private vault for the things you save: links, images, videos, screenshots and clips. Self-hosted, on an isolated SQLite database with local file storage, with no external trackers and no telemetry.
 
-## About Laravel
+![Keepsake landing page](docs/screenshots/welcome.jpg)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Save links** and Keepsake fetches the page title, description, preview image and favicon from its OpenGraph tags.
+- **Upload files**: images, videos, screenshots and clips, up to 100 MB each, by drag and drop or file picker.
+- **Organise** with colour-coded tags and categories with their own icons, and pin the items you return to.
+- **Find things fast**: search, filter by type, tag, category or pinned, and press `Ctrl+K` to jump to search.
+- **Private by default**: everything lives in your own database and storage folder.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Screenshots
 
-## Learning Laravel
+| Dashboard | Save something new |
+| --- | --- |
+| ![Dashboard with filters and item cards](docs/screenshots/dashboard.jpg) | ![Add item dialog](docs/screenshots/add-item.jpg) |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Item | Mobile |
+| --- | --- |
+| ![Item detail page](docs/screenshots/item.jpg) | ![Dashboard on a phone](docs/screenshots/mobile.jpg) |
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The screenshots show a demo account with sample items.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Stack
 
-## Agentic Development
+- [Laravel](https://laravel.com) 13 on PHP 8.3+
+- [Inertia.js](https://inertiajs.com) with Vue 3
+- [Tailwind CSS](https://tailwindcss.com) 3, with a token-driven design layer in `resources/css`
+- [Vite](https://vitejs.dev) and [Ziggy](https://github.com/tighten/ziggy) for routes in JavaScript
+- SQLite
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Getting started
 
-```bash
-composer require laravel/boost --dev
+You need PHP 8.3+, Composer, Node.js and npm.
 
-php artisan boost:install
+```sh
+git clone https://github.com/yudhvir01/keepsake.git
+cd keepsake
+
+composer install
+cp .env.example .env
+php artisan key:generate
+
+touch database/database.sqlite
+php artisan migrate
+php artisan storage:link
+
+npm install --ignore-scripts
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Then run the app in two terminals:
+
+```sh
+php artisan serve   # http://localhost:8000
+npm run dev         # Vite dev server with hot reloading
+```
+
+Create an account from the landing page and start saving.
+
+> This project is developed against the Vite dev server only. Do not run `npm run build` or commit anything in `public/build`.
+
+### Tests
+
+```sh
+php artisan test
+```
+
+## Design
+
+The interface is a dark, minimal system with smoked-glass surfaces and one periwinkle accent.
+
+- `resources/css/tokens.css`: colours, type, spacing, motion and glass tokens
+- `resources/css/base.css`: reset and global rules
+- `resources/css/ui.css`: shared components (glass, buttons, fields, chips, cards, modals)
+- `resources/js/Components/TypeIcon.vue`: the single SVG icon set
+
+Animations use only `transform` and `opacity` and are switched off under `prefers-reduced-motion`.
+
+## Credits
+
+The background photograph is by [Thomas Bresson](https://commons.wikimedia.org/wiki/File:Vallee-brouillard.jpg), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), via Wikimedia Commons.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Commit messages are written as the developer's own. Do not add AI attribution lines such as `Co-Authored-By: Claude` or "Generated with Claude Code" to commits or pull requests. A `commit-msg` hook in `.githooks/` enforces this; enable it once per clone:
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```sh
+git config core.hooksPath .githooks
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Released under the [MIT license](https://opensource.org/licenses/MIT).
